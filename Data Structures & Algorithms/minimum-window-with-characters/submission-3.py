@@ -1,0 +1,32 @@
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        if t == "":
+            return ""
+        
+        countT, window = defaultdict(int), defaultdict(int)
+        for c in t:
+            countT[c]+=1
+        have, need = 0, len(countT)
+        ans, ans_len = [-1, -1], float('infinity')
+        l = 0
+        q = deque()
+        for r in range(len(s)):
+            c = s[r]
+            window[c]+=1
+
+            if c in countT:
+                q.append(r)
+                if window[c] == countT[c]:
+                    have+=1
+            
+            while have == need:
+                l=q.popleft()
+                if (r - l + 1) < ans_len:
+                    ans = [l, r]
+                    ans_len = r - l + 1
+                window[s[l]] -= 1
+                if s[l] in countT and window[s[l]] < countT[s[l]]:
+                    have-=1
+                
+        l, r = ans
+        return s[l:r+1] if ans_len != float("infinity") else ""
